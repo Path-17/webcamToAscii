@@ -22,7 +22,7 @@
         </div>
         <div class="play-area-sub">
           <h3>The Capture</h3>
-          <canvas id="capture" width="320" height="240"></canvas>
+          <canvas id="capture" width="320" height="120"></canvas>
           <div id="snapshot"></div>
         </div>
       </div>
@@ -52,6 +52,7 @@
                         cameraStream = mediaStream;
                         stream.srcObject = mediaStream;
                         stream.play();
+                        setInterval(captureSnapshot, 40);
                     })
                     .catch( function( err ) {
                         console.log( "Unable to access camera: " + err );
@@ -78,16 +79,16 @@
                 if( null != cameraStream ) {
 
                     var ctx = capture.getContext( '2d' );
-                    var img = new Image();
+                    // var img = new Image();
 
-                    ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+                    // ctx.drawImage(stream, 0, 0, capture.width, capture.height);
 
-                    img.src = capture.toDataURL("image/png");
-                    img.width = 240;
+                    // img.src = capture.toDataURL("image/png");
+                    // img.width = 240;
 
-                    snapshot.innerHTML = '';
+                    // snapshot.innerHTML = '';
 
-                    snapshot.appendChild( img );
+                    // snapshot.appendChild( img );
 
                     // png data at img.currentSrc
                     ctx.drawImage(stream, 0, 0, capture.width, capture.height);
@@ -116,24 +117,30 @@
                     console.log(grayScaleValues);
 
                     imageData.data = pixels;
-                    ctx.putImageData(imageData, 0, 0);
-                    img.src = capture.toDataURL();
+                    //ctx.putImageData(imageData, 0, 0);
+                    //img.src = capture.toDataURL();
 
-                    let asciiChars = ["@", "#", "%", "?", "*", "+", ";", ",", "."];
-                    let asciiMatrix = [];
+                    let asciiChars = ["@", "#", "8", "S", "%", "?", "*", "+", ";", ",", "."];
+                    let ascii = "";
                     for(let i = 0 ; i < capture.height ; i++){
                         for(let j = 0 ; j < capture.width ; j++){
-                            let brightnessUnit = 255/asciiChars.length;
-                            
+                            let brightnessUnit = 256/asciiChars.length;
+                            let index = Math.floor(Math.ceil(grayMatrix[i][j]) / brightnessUnit);
 
+                            ascii += asciiChars[index];
 
                         }
+                        ascii += "\n";
                     }
-
-
-
+                    console.log(ascii);
+                    document.getElementById("pAscii").innerText = ascii;
                 }
             }
       </script>
+      <div class="ascii-container">
+          <p id="pAscii" class="ascii">
+              
+          </p>
+      </div>
 </body>
 </html>

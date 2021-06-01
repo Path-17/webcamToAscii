@@ -15,6 +15,10 @@
     display: inline-block;
     text-align: center;
   }
+  .ascii{
+      font-size: 5px;
+      font-family: monospace;
+  }
   
   #capture {
     display: none;
