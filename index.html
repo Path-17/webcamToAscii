@@ -6,11 +6,134 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css"/>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
 </head>
 <body>
-    <div id="container"">
-        <video autoplay = "true" id="videoElement"></video>
-        <script type="text/javascript" src="videoLogic.js"></script>
-    </div>
+    <div class="button-group">
+        <button id="btn-start" type="button" class="button">Start Streaming</button>
+        <button id="btn-stop" type="button" class="button">Stop Streaming</button>
+        <button id="btn-capture" type="button" class="button">Capture Image</button>
+      </div>
+
+      <div class="play-area">
+        <div class="play-area-sub">
+          <h3>The Stream</h3>
+          <video id="stream" width="320" height="240"></video>
+        </div>
+        <div class="play-area-sub">
+          <h3>The Capture</h3>
+          <canvas id="capture" width="320" height="240"></canvas>
+          <div id="snapshot"></div>
+        </div>
+      </div>
+      <script>
+            var btnStart = document.getElementById( "btn-start" );
+            var btnStop = document.getElementById( "btn-stop" );
+            var btnCapture = document.getElementById( "btn-capture" );
+
+            // The stream & capture
+            var stream = document.getElementById( "stream" );
+            var capture = document.getElementById( "capture" );
+            var snapshot = document.getElementById( "snapshot" );
+
+            // The video stream
+            var cameraStream = null;
+
+            // Attach listeners
+            btnStart.addEventListener( "click", startStreaming );
+            btnStop.addEventListener( "click", stopStreaming );
+
+            // Start Streaming
+            function startStreaming() {
+                var mediaSupport = 'mediaDevices' in navigator;
+                if(mediaSupport && null == cameraStream ) {
+                    navigator.mediaDevices.getUserMedia( { video: true } )
+                    .then( function( mediaStream ) {
+                        cameraStream = mediaStream;
+                        stream.srcObject = mediaStream;
+                        stream.play();
+                    })
+                    .catch( function( err ) {
+                        console.log( "Unable to access camera: " + err );
+                    });
+                }
+                else {
+                    alert( 'Your browser does not support media devices.' );
+                    return;
+                }
+            }
+            // Stop Streaming
+            function stopStreaming() {
+                if( null != cameraStream ) {
+                    var track = cameraStream.getTracks()[ 0 ];
+                    track.stop();
+                    stream.load();
+                    cameraStream = null;
+                }
+            }
+            btnCapture.addEventListener( "click", captureSnapshot );
+
+            function captureSnapshot() {
+
+                if( null != cameraStream ) {
+
+                    var ctx = capture.getContext( '2d' );
+                    var img = new Image();
+
+                    ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+
+                    img.src = capture.toDataURL("image/png");
+                    img.width = 240;
+
+                    snapshot.innerHTML = '';
+
+                    snapshot.appendChild( img );
+
+                    // png data at img.currentSrc
+                    ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+                    let imageData = ctx.getImageData(0, 0, capture.width, capture.height);
+                    let pixels = imageData.data;
+                    console.log(imageData);
+
+                    let grayScaleValues = [];
+                    let grayMatrix = [];
+
+                    // now to convert to r,g,b,a lists, per pixel
+                    for (var i = 0; i < pixels.length; i += 4) {
+
+                        let brightness = 0.2126 * pixels[i] + 0.715 * pixels[i+1] + 0.0722 * pixels[i+2];
+
+                        pixels[i] = brightness;
+                        pixels[i+1] = brightness;
+                        pixels[i+2] = brightness;
+                        grayScaleValues.push(brightness);
+                    }
+                    for(let i = 0 ; i < grayScaleValues.length ; i+=capture.width){
+                        let line = grayScaleValues.slice(i, i+capture.width);
+                        grayMatrix.push(line);
+                    }
+                    console.log(grayMatrix);
+                    console.log(grayScaleValues);
+
+                    imageData.data = pixels;
+                    ctx.putImageData(imageData, 0, 0);
+                    img.src = capture.toDataURL();
+
+                    let asciiChars = ["@", "#", "%", "?", "*", "+", ";", ",", "."];
+                    let asciiMatrix = [];
+                    for(let i = 0 ; i < capture.height ; i++){
+                        for(let j = 0 ; j < capture.width ; j++){
+                            let brightnessUnit = 255/asciiChars.length;
+                            
+
+
+                        }
+                    }
+
+
+
+                }
+            }
+      </script>
 </body>
 </html>
