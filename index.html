@@ -12,18 +12,20 @@
     <div class="button-group">
         <button id="btn-start" type="button" class="button">Start Streaming</button>
         <button id="btn-stop" type="button" class="button">Stop Streaming</button>
-        <button id="btn-capture" type="button" class="button">Capture Image</button>
+        <button style="display: none;" id="btn-capture" type="button" class="button">Capture Image</button>
       </div>
 
       <div class="play-area">
         <div class="play-area-sub">
-          <h3>The Stream</h3>
-          <video id="stream" width="320" height="240"></video>
+          <video style="display: none;" id="stream" width="320" height="240"></video>
         </div>
         <div class="play-area-sub">
-          <h3>The Capture</h3>
+          <h3>The Stream</h3>
           <canvas id="capture" width="320" height="120"></canvas>
-          <div id="snapshot"></div>
+          <div class="snap" id="snapshot">
+            <p id="pAscii" class="ascii">
+            </p>
+          </div>
         </div>
       </div>
       <script>
@@ -137,10 +139,5 @@
                 }
             }
       </script>
-      <div class="ascii-container">
-          <p id="pAscii" class="ascii">
-              
-          </p>
-      </div>
 </body>
 </html>

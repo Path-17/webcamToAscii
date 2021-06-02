@@ -8,24 +8,20 @@
     padding: 0.5em;
     margin-right: 1em;
   }
+
+  .snap{
+    text-align: center;
+    width: fit-content;
+  }
   
   .play-area-sub {
-    width: 47%;
-    padding: 1em 1%;
-    display: inline-block;
     text-align: center;
   }
   .ascii{
-      font-size: 5px;
+      font-size: 3px;
       font-family: monospace;
   }
   
   #capture {
     display: none;
-  }
-  
-  #snapshot {
-    display: inline-block;
-    width: 320px;
-    height: 240px;
   }
